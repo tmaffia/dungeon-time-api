@@ -53,19 +53,19 @@ type userService struct {
 	userRepo *repo.Queries
 }
 
-func NewUserService(dbPool *pgxpool.Pool) userService {
-	return userService{
+func NewUserService(dbPool *pgxpool.Pool) *userService {
+	return &userService{
 		dbPool:   dbPool,
 		userRepo: repo.New(dbPool),
 	}
 }
 
-func (s userService) GetUserByID(ctx context.Context, id int32) (*User, error) {
+func (s *userService) GetUserByID(ctx context.Context, id int32) (*User, error) {
 	s.userRepo.GetUserByID(ctx, id)
 	return nil, nil
 }
 
-func (s userService) GetUsers(ctx context.Context) ([]*User, error) {
+func (s *userService) GetUsers(ctx context.Context) ([]*User, error) {
 	var users []*User
 	u, err := s.userRepo.GetUsers(ctx)
 	if err != nil {
@@ -93,7 +93,7 @@ func (s userService) GetUsers(ctx context.Context) ([]*User, error) {
 
 }
 
-func (s userService) RegisterUser(ctx context.Context, username, email string, opts ...func(*User)) (*User, error) {
+func (s *userService) RegisterUser(ctx context.Context, username, email string, opts ...func(*User)) (*User, error) {
 	return nil, nil
 }
 
