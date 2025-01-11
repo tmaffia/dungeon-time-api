@@ -1,5 +1,7 @@
 package main
 
+import "github.com/tmaffia/dungeon-time-api/internal/api"
+
 func main() {
-	println("Hello World!")
+	api.StartApi()
 }
