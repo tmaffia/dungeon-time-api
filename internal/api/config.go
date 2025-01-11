@@ -3,13 +3,11 @@ package api
 import (
 	"os"
 
-	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/tmaffia/dungeon-time-api/internal/db"
+	"github.com/tmaffia/dungeon-time-api/internal/service"
 )
 
 type appState struct {
-	dbPool *pgxpool.Pool
-	q      *db.Queries
+	userService service.UserService
 }
 
 type config struct {

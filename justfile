@@ -18,12 +18,11 @@ test:
 mocks:
     go run github.com/vektra/mockery/v2@v2.44.1
 
-migrate-create args:
+migrate-create *args:
     migrate create -ext sql -dir db/migrations -seq {{args}}
 
-migrate args:
+migrate *args:
     migrate -database $DUNGEON_TIME_API_DATABASE_URL -path db/migrations {{args}} 
 
-sqlc args:
+sqlc *args:
     go run github.com/sqlc-dev/sqlc/cmd/sqlc@latest {{args}}
-

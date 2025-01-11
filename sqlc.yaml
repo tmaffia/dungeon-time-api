@@ -5,6 +5,7 @@ sql:
     schema: "db/migrations/"    # or a schema.sql file.  This is only to understand the table structure
     gen:
       go:
-        package: "db"
-        out: "internal/db"
+        package: "repo"
+        out: "internal/repo"
         sql_package: "pgx/v5" 
+        emit_result_struct_pointers: true

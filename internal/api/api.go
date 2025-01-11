@@ -8,7 +8,7 @@ import (
 	"strconv"
 
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/tmaffia/dungeon-time-api/internal/db"
+	"github.com/tmaffia/dungeon-time-api/internal/service"
 )
 
 func StartApi() {
@@ -18,10 +18,10 @@ func StartApi() {
 		panic(err)
 	}
 
-	q := db.New(dbpool)
+	userService := service.NewUserService(dbpool)
+
 	as := appState{
-		dbPool: dbpool,
-		q:      q,
+		userService: userService,
 	}
 
 	mux := http.NewServeMux()
@@ -40,7 +40,7 @@ func healthHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (as appState) getUsersHandler(w http.ResponseWriter, r *http.Request) {
-	users, err := as.q.GetUsers(context.Background())
+	users, err := as.userService.GetUsers(context.Background())
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -67,14 +67,14 @@ func (as appState) getUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := as.q.GetUserById(context.Background(), int32(id))
+	user, err := as.userService.GetUserByID(context.Background(), int32(id))
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
 		return
 	}
 
-	userJson, err := json.MarshalIndent(user, "", "  ")
+	userJson, err := json.Marshal(user)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
