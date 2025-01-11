@@ -1,0 +1,10 @@
+version: "2"
+sql:
+  - engine: "postgresql"
+    queries: "db/queries.sql" # or a directory, e.g. "queries/"
+    schema: "db/migrations/"    # or a schema.sql file.  This is only to understand the table structure
+    gen:
+      go:
+        package: "db"
+        out: "internal/db"
+        sql_package: "pgx/v5" 

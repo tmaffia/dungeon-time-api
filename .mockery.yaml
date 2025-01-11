@@ -1,0 +1,10 @@
+with-expecter: True
+dir: "mock/{{.PackageName}}"
+mockname: "{{.InterfaceName}}"
+outpkg: "{{.PackageName}}_mock"
+filename: "{{.InterfaceName}}_mock.go"
+all: True
+packages:
+  github.com/tmaffia/dungeon-time-api:
+    config:
+      recursive: True
