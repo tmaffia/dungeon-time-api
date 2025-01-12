@@ -9,3 +9,6 @@ sql:
         out: "internal/repo"
         sql_package: "pgx/v5" 
         emit_result_struct_pointers: true
+        emit_interface: false
+        emit_prepared_queries: false 
+        emit_db_tags: false

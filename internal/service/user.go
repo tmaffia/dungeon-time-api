@@ -46,6 +46,8 @@ type UserService interface {
 	RegisterUser(context.Context, string, string, ...func(*User)) (*User, error)
 	GetUsers(context.Context) ([]*User, error)
 	GetUserByID(context.Context, int32) (*User, error)
+	GetUserByEmail(context.Context, string) (*User, error)
+	GetUserByUsername(context.Context, string) (*User, error)
 }
 
 type userService struct {
@@ -58,11 +60,6 @@ func NewUserService(dbPool *pgxpool.Pool) *userService {
 		dbPool:   dbPool,
 		userRepo: repo.New(dbPool),
 	}
-}
-
-func (s *userService) GetUserByID(ctx context.Context, id int32) (*User, error) {
-	s.userRepo.GetUserByID(ctx, id)
-	return nil, nil
 }
 
 func (s *userService) GetUsers(ctx context.Context) ([]*User, error) {
@@ -79,18 +76,74 @@ func (s *userService) GetUsers(ctx context.Context) ([]*User, error) {
 		}
 
 		users = append(users, &User{
-			ID:           user.ID,
-			Username:     user.Username,
-			Email:        user.Email,
-			PasswordHash: user.PasswordHash,
-			Roles:        roles,
-			Timezone:     user.Timezone,
-			CreatedAt:    user.CreatedAt.Time,
-			UpdatedAt:    user.UpdatedAt.Time,
+			ID:       user.ID,
+			Username: user.Username,
+			Email:    user.Email,
+			Roles:    roles,
+			Timezone: user.Timezone,
 		})
 	}
 	return users, nil
+}
 
+func (s *userService) GetUserByID(ctx context.Context, id int32) (*User, error) {
+	u, err := s.userRepo.GetUserByID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	roles, err := mapRoles(u.Roles)
+	if err != nil {
+		return nil, err
+	}
+
+	return &User{
+		ID:       u.ID,
+		Username: u.Username,
+		Email:    u.Email,
+		Roles:    roles,
+		Timezone: u.Timezone,
+	}, nil
+}
+
+func (s *userService) GetUserByEmail(ctx context.Context, email string) (*User, error) {
+	u, err := s.userRepo.GetUserByEmail(ctx, email)
+	if err != nil {
+		return nil, err
+	}
+
+	roles, err := mapRoles(u.Roles)
+	if err != nil {
+		return nil, err
+	}
+
+	return &User{
+		ID:       u.ID,
+		Username: u.Username,
+		Email:    u.Email,
+		Roles:    roles,
+		Timezone: u.Timezone,
+	}, nil
+}
+
+func (s *userService) GetUserByUsername(ctx context.Context, username string) (*User, error) {
+	u, err := s.userRepo.GetUserByUsername(ctx, username)
+	if err != nil {
+		return nil, err
+	}
+
+	roles, err := mapRoles(u.Roles)
+	if err != nil {
+		return nil, err
+	}
+
+	return &User{
+		ID:       u.ID,
+		Username: u.Username,
+		Email:    u.Email,
+		Roles:    roles,
+		Timezone: u.Timezone,
+	}, nil
 }
 
 func (s *userService) RegisterUser(ctx context.Context, username, email string, opts ...func(*User)) (*User, error) {
@@ -104,7 +157,6 @@ func mapRoles(roleStrings []string) ([]UserRole, error) {
 		if err != nil {
 			return nil, err
 		}
-
 		roles = append(roles, r)
 	}
 	return roles, nil
