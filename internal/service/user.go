@@ -11,6 +11,11 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// User represents a user account for the application.
+// The passwordHash field is not exported to prevent accidental exposure.
+// Use GetPasswordHash() to retrieve the password hash.
+// Use ValidatePassword() to check if a password matches the hash.
+// Use userBuilder to create a new user.
 type User struct {
 	ID           int32  `json:"id"`
 	Username     string `json:"username"`
@@ -22,10 +27,16 @@ type User struct {
 	UpdatedAt    time.Time     `json:"updated_at"`
 }
 
+// Builder object for User struct
 type userBuilder struct {
 	user *User
 }
 
+// BuildUser creates a userBuilder to assemble a valid User.
+// Returns an error if the password is invalid according to the
+// password rules. Takes all the required fields for a User.
+// The Builder has methods to add optional fields, such as Roles and Timezone.
+// Call Build() to create the User.
 func BuildUser(username, email, password string) (*userBuilder, error) {
 	if !isValidPassword(password) {
 		return nil, ErrInvalidPassword
@@ -45,29 +56,39 @@ func BuildUser(username, email, password string) (*userBuilder, error) {
 	}, nil
 }
 
+// Roles adds roles to the userBuilder
 func (ub *userBuilder) Roles(roles ...UserRole) *userBuilder {
 	ub.user.Roles = roles
 	return ub
 }
 
+// Timezone adds a timezone to the userBuilder
 func (ub *userBuilder) Timezone(timezone time.Location) *userBuilder {
 	ub.user.Timezone = timezone
 	return ub
 }
 
+// Build creates a User from the userBuilder
+// Call at the end of a typical builder pattern chain
 func (ub *userBuilder) Build() *User {
 	return ub.user
 }
 
+// GetPasswordHash returns the password hash for the user
 func (u *User) GetPasswordHash() string {
 	return u.passwordHash
 }
 
+// ValidatePassword checks if the provided password matches the user's password hash
+// Returns true if the password matches, false otherwise
+// Use this method to validate a user's password
 func (u *User) ValidatePassword(password string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(u.passwordHash), []byte(password))
 	return err == nil
 }
 
+// UserRole represents the role of a user in the application
+// This type is used in place of enum as Go does not have an enum type... somehow...
 type UserRole string
 
 const (
@@ -78,9 +99,11 @@ const (
 	RoleDPS    = UserRole("DPS")
 )
 
+// Pre defined user roles, these are the only valid roles for a user.
 var userRoles = []UserRole{RoleLeader, RoleMember,
 	RoleTank, RoleHealer, RoleDPS}
 
+// UserService is the interface for user-related operations.
 type UserService interface {
 	RegisterUser(context.Context, *User) (*User, error)
 	GetUsers(context.Context) ([]*User, error)
@@ -89,11 +112,16 @@ type UserService interface {
 	GetUserByUsername(context.Context, string) (*User, error)
 }
 
+// userService is the implementation of UserService. It uses a database connection
+// pool and a repository to interact with the database. It is responsible for
+// user-related operations.
 type userService struct {
 	dbPool   *pgxpool.Pool
 	userRepo *repo.Queries
 }
 
+// NewUserService creates a new userService with the provided database connection pool.
+// It returns a pointer to the userService.
 func NewUserService(dbPool *pgxpool.Pool) *userService {
 	return &userService{
 		dbPool:   dbPool,
@@ -101,6 +129,10 @@ func NewUserService(dbPool *pgxpool.Pool) *userService {
 	}
 }
 
+// RegisterUser creates a new user in the database. It takes an already created User
+// and performs validation on that user. Users should always be created using the BuildUser() function
+// to ensure that the password is hashed correctly. Returns the created user if successful.
+// Returns an error specific to the validation problem if the user is invalid.
 func (s *userService) RegisterUser(ctx context.Context, user *User) (*User, error) {
 	err := isValidUser(user)
 	if err != nil {
@@ -126,6 +158,8 @@ func (s *userService) RegisterUser(ctx context.Context, user *User) (*User, erro
 	return user, nil
 }
 
+// GetUsers returns all registered users. Only the ID, Username, Email, Roles, and Timezone
+// fields are returned for each user.
 func (s *userService) GetUsers(ctx context.Context) ([]*User, error) {
 	var users []*User
 	u, err := s.userRepo.GetUsers(ctx)
@@ -155,6 +189,8 @@ func (s *userService) GetUsers(ctx context.Context) ([]*User, error) {
 	return users, nil
 }
 
+// GetUserByID returns a user by ID. Only the ID, Username, Email, Roles, and Timezone
+// fields are returned for the user.
 func (s *userService) GetUserByID(ctx context.Context, id int32) (*User, error) {
 	u, err := s.userRepo.GetUserByID(ctx, id)
 	if err != nil {
@@ -180,6 +216,8 @@ func (s *userService) GetUserByID(ctx context.Context, id int32) (*User, error) 
 	}, nil
 }
 
+// GetUserByEmail returns a user by email. Only the ID, Username, Email, Roles, and Timezone
+// fields are returned for the user.
 func (s *userService) GetUserByEmail(ctx context.Context, email string) (*User, error) {
 	u, err := s.userRepo.GetUserByEmail(ctx, email)
 	if err != nil {
@@ -205,6 +243,8 @@ func (s *userService) GetUserByEmail(ctx context.Context, email string) (*User, 
 	}, nil
 }
 
+// GetUserByUsername returns a user by username. Only the ID, Username, Email, Roles, and Timezone
+// fields are returned for the user.
 func (s *userService) GetUserByUsername(ctx context.Context, username string) (*User, error) {
 	u, err := s.userRepo.GetUserByUsername(ctx, username)
 	if err != nil {
