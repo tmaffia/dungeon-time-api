@@ -3,13 +3,13 @@ package service
 import "errors"
 
 var (
-	ErrorUserNotFound      = errors.New("user not found")
-	ErrorUserExists        = errors.New("user already exists")
-	ErrorIncorrectPassword = errors.New("incorrect password")
-	ErrorInvalidUser       = errors.New("invalid user")
-	ErrorInvalidRole       = errors.New("invalid role")
-	ErrorInvalidTimezone   = errors.New("invalid timezone")
-	ErrorInvalidPassword   = errors.New("invalid password")
-	ErrorInvalidEmail      = errors.New("invalid email")
-	ErrorInvalidUsername   = errors.New("invalid username")
+	ErrUserNotFound      = errors.New("user not found")
+	ErrUserExists        = errors.New("user already exists")
+	ErrIncorrectPassword = errors.New("incorrect password")
+	ErrInvalidUser       = errors.New("invalid user")
+	ErrInvalidRole       = errors.New("invalid role")
+	ErrInvalidTimezone   = errors.New("invalid timezone")
+	ErrInvalidPassword   = errors.New("invalid password")
+	ErrInvalidEmail      = errors.New("invalid email")
+	ErrInvalidUsername   = errors.New("invalid username")
 )

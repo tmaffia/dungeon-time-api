@@ -28,7 +28,7 @@ type userBuilder struct {
 
 func BuildUser(username, email, password string) (*userBuilder, error) {
 	if !isValidPassword(password) {
-		return nil, ErrorInvalidPassword
+		return nil, ErrInvalidPassword
 	}
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
@@ -237,7 +237,7 @@ func mapRoles(roleStrings []string) ([]UserRole, error) {
 		roles = append(roles, r)
 	}
 	if !isValidRoles(roles...) {
-		return nil, ErrorInvalidRole
+		return nil, ErrInvalidRole
 	}
 	return roles, nil
 }
@@ -252,11 +252,11 @@ func mapTimezone(timezone string) (time.Location, error) {
 
 func isValidUser(user *User) error {
 	if !isValidUsername(user.Username) {
-		return ErrorInvalidUsername
+		return ErrInvalidUsername
 	}
 
 	if !isValidEmail(user.Email) {
-		return ErrorInvalidEmail
+		return ErrInvalidEmail
 	}
 
 	return nil
