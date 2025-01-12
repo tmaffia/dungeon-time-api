@@ -52,82 +52,6 @@ func TestBuildUser(t *testing.T) {
 	}
 }
 
-func Test_userBuilder_Roles(t *testing.T) {
-	type args struct {
-		roles []UserRole
-	}
-	tests := []struct {
-		name string
-		ub   *userBuilder
-		args args
-		want *userBuilder
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.ub.Roles(tt.args.roles...); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("userBuilder.Roles() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_userBuilder_Timezone(t *testing.T) {
-	type args struct {
-		timezone time.Location
-	}
-	tests := []struct {
-		name string
-		ub   *userBuilder
-		args args
-		want *userBuilder
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.ub.Timezone(tt.args.timezone); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("userBuilder.Timezone() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_userBuilder_Build(t *testing.T) {
-	tests := []struct {
-		name string
-		ub   *userBuilder
-		want *User
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.ub.Build(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("userBuilder.Build() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestUser_GetPasswordHash(t *testing.T) {
-	tests := []struct {
-		name string
-		u    *User
-		want string
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.u.GetPasswordHash(); got != tt.want {
-				t.Errorf("User.GetPasswordHash() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func TestUser_ValidatePassword(t *testing.T) {
 	type args struct {
 		password string
@@ -138,13 +62,20 @@ func TestUser_ValidatePassword(t *testing.T) {
 		args args
 		want bool
 	}{
-		// TODO: Add test cases.
+		{"TestValidatePassword Success",
+			&User{passwordHash: "$2a$10$Hur1mzq5JZbbXAYBvwgH0uAOlc5dOPn0EswvqVmY6PTBdquTBiXs."},
+			args{"test12345!"},
+			true,
+		},
+		{"TestValidatePassword Fail",
+			&User{passwordHash: "$2a$10$Hur1mzq5JZbbXAYBvwgH0uAOlc5dOPn0EswvqVmY6PTBdquTBiXs."},
+			args{"test"},
+			false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.u.ValidatePassword(tt.args.password); got != tt.want {
-				t.Errorf("User.ValidatePassword() = %v, want %v", got, tt.want)
-			}
+			assert.Equal(t, tt.want, tt.u.ValidatePassword(tt.args.password))
 		})
 	}
 }
