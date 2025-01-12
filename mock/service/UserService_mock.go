@@ -22,6 +22,65 @@ func (_m *UserService) EXPECT() *UserService_Expecter {
 	return &UserService_Expecter{mock: &_m.Mock}
 }
 
+// GetUserByEmail provides a mock function with given fields: _a0, _a1
+func (_m *UserService) GetUserByEmail(_a0 context.Context, _a1 string) (*service.User, error) {
+	ret := _m.Called(_a0, _a1)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetUserByEmail")
+	}
+
+	var r0 *service.User
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, string) (*service.User, error)); ok {
+		return rf(_a0, _a1)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, string) *service.User); ok {
+		r0 = rf(_a0, _a1)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*service.User)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = rf(_a0, _a1)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// UserService_GetUserByEmail_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetUserByEmail'
+type UserService_GetUserByEmail_Call struct {
+	*mock.Call
+}
+
+// GetUserByEmail is a helper method to define mock.On call
+//   - _a0 context.Context
+//   - _a1 string
+func (_e *UserService_Expecter) GetUserByEmail(_a0 interface{}, _a1 interface{}) *UserService_GetUserByEmail_Call {
+	return &UserService_GetUserByEmail_Call{Call: _e.mock.On("GetUserByEmail", _a0, _a1)}
+}
+
+func (_c *UserService_GetUserByEmail_Call) Run(run func(_a0 context.Context, _a1 string)) *UserService_GetUserByEmail_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context), args[1].(string))
+	})
+	return _c
+}
+
+func (_c *UserService_GetUserByEmail_Call) Return(_a0 *service.User, _a1 error) *UserService_GetUserByEmail_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *UserService_GetUserByEmail_Call) RunAndReturn(run func(context.Context, string) (*service.User, error)) *UserService_GetUserByEmail_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // GetUserByID provides a mock function with given fields: _a0, _a1
 func (_m *UserService) GetUserByID(_a0 context.Context, _a1 int32) (*service.User, error) {
 	ret := _m.Called(_a0, _a1)
@@ -77,6 +136,65 @@ func (_c *UserService_GetUserByID_Call) Return(_a0 *service.User, _a1 error) *Us
 }
 
 func (_c *UserService_GetUserByID_Call) RunAndReturn(run func(context.Context, int32) (*service.User, error)) *UserService_GetUserByID_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// GetUserByUsername provides a mock function with given fields: _a0, _a1
+func (_m *UserService) GetUserByUsername(_a0 context.Context, _a1 string) (*service.User, error) {
+	ret := _m.Called(_a0, _a1)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetUserByUsername")
+	}
+
+	var r0 *service.User
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, string) (*service.User, error)); ok {
+		return rf(_a0, _a1)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, string) *service.User); ok {
+		r0 = rf(_a0, _a1)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*service.User)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = rf(_a0, _a1)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// UserService_GetUserByUsername_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetUserByUsername'
+type UserService_GetUserByUsername_Call struct {
+	*mock.Call
+}
+
+// GetUserByUsername is a helper method to define mock.On call
+//   - _a0 context.Context
+//   - _a1 string
+func (_e *UserService_Expecter) GetUserByUsername(_a0 interface{}, _a1 interface{}) *UserService_GetUserByUsername_Call {
+	return &UserService_GetUserByUsername_Call{Call: _e.mock.On("GetUserByUsername", _a0, _a1)}
+}
+
+func (_c *UserService_GetUserByUsername_Call) Run(run func(_a0 context.Context, _a1 string)) *UserService_GetUserByUsername_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context), args[1].(string))
+	})
+	return _c
+}
+
+func (_c *UserService_GetUserByUsername_Call) Return(_a0 *service.User, _a1 error) *UserService_GetUserByUsername_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *UserService_GetUserByUsername_Call) RunAndReturn(run func(context.Context, string) (*service.User, error)) *UserService_GetUserByUsername_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -139,16 +257,9 @@ func (_c *UserService_GetUsers_Call) RunAndReturn(run func(context.Context) ([]*
 	return _c
 }
 
-// RegisterUser provides a mock function with given fields: _a0, _a1, _a2, _a3
-func (_m *UserService) RegisterUser(_a0 context.Context, _a1 string, _a2 string, _a3 ...func(*service.User)) (*service.User, error) {
-	_va := make([]interface{}, len(_a3))
-	for _i := range _a3 {
-		_va[_i] = _a3[_i]
-	}
-	var _ca []interface{}
-	_ca = append(_ca, _a0, _a1, _a2)
-	_ca = append(_ca, _va...)
-	ret := _m.Called(_ca...)
+// RegisterUser provides a mock function with given fields: _a0, _a1
+func (_m *UserService) RegisterUser(_a0 context.Context, _a1 *service.User) (*service.User, error) {
+	ret := _m.Called(_a0, _a1)
 
 	if len(ret) == 0 {
 		panic("no return value specified for RegisterUser")
@@ -156,19 +267,19 @@ func (_m *UserService) RegisterUser(_a0 context.Context, _a1 string, _a2 string,
 
 	var r0 *service.User
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, string, string, ...func(*service.User)) (*service.User, error)); ok {
-		return rf(_a0, _a1, _a2, _a3...)
+	if rf, ok := ret.Get(0).(func(context.Context, *service.User) (*service.User, error)); ok {
+		return rf(_a0, _a1)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, string, string, ...func(*service.User)) *service.User); ok {
-		r0 = rf(_a0, _a1, _a2, _a3...)
+	if rf, ok := ret.Get(0).(func(context.Context, *service.User) *service.User); ok {
+		r0 = rf(_a0, _a1)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*service.User)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, string, string, ...func(*service.User)) error); ok {
-		r1 = rf(_a0, _a1, _a2, _a3...)
+	if rf, ok := ret.Get(1).(func(context.Context, *service.User) error); ok {
+		r1 = rf(_a0, _a1)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -183,23 +294,14 @@ type UserService_RegisterUser_Call struct {
 
 // RegisterUser is a helper method to define mock.On call
 //   - _a0 context.Context
-//   - _a1 string
-//   - _a2 string
-//   - _a3 ...func(*service.User)
-func (_e *UserService_Expecter) RegisterUser(_a0 interface{}, _a1 interface{}, _a2 interface{}, _a3 ...interface{}) *UserService_RegisterUser_Call {
-	return &UserService_RegisterUser_Call{Call: _e.mock.On("RegisterUser",
-		append([]interface{}{_a0, _a1, _a2}, _a3...)...)}
+//   - _a1 *service.User
+func (_e *UserService_Expecter) RegisterUser(_a0 interface{}, _a1 interface{}) *UserService_RegisterUser_Call {
+	return &UserService_RegisterUser_Call{Call: _e.mock.On("RegisterUser", _a0, _a1)}
 }
 
-func (_c *UserService_RegisterUser_Call) Run(run func(_a0 context.Context, _a1 string, _a2 string, _a3 ...func(*service.User))) *UserService_RegisterUser_Call {
+func (_c *UserService_RegisterUser_Call) Run(run func(_a0 context.Context, _a1 *service.User)) *UserService_RegisterUser_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		variadicArgs := make([]func(*service.User), len(args)-3)
-		for i, a := range args[3:] {
-			if a != nil {
-				variadicArgs[i] = a.(func(*service.User))
-			}
-		}
-		run(args[0].(context.Context), args[1].(string), args[2].(string), variadicArgs...)
+		run(args[0].(context.Context), args[1].(*service.User))
 	})
 	return _c
 }
@@ -209,7 +311,7 @@ func (_c *UserService_RegisterUser_Call) Return(_a0 *service.User, _a1 error) *U
 	return _c
 }
 
-func (_c *UserService_RegisterUser_Call) RunAndReturn(run func(context.Context, string, string, ...func(*service.User)) (*service.User, error)) *UserService_RegisterUser_Call {
+func (_c *UserService_RegisterUser_Call) RunAndReturn(run func(context.Context, *service.User) (*service.User, error)) *UserService_RegisterUser_Call {
 	_c.Call.Return(run)
 	return _c
 }
