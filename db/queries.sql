@@ -9,13 +9,13 @@ WHERE id = $1 LIMIT 1;
 SELECT id, username, email, roles, timezone FROM users
 WHERE email = $1 LIMIT 1;
 
--- name: GetUserFullByEmail :one
-SELECT * FROM users
-WHERE email = $1 LIMIT 1;
-
 -- name: GetUserByUsername :one
 SELECT id, username, email, roles, timezone FROM users
 WHERE username = $1 LIMIT 1;
+
+-- name: GetUserFullByEmail :one
+SELECT * FROM users
+WHERE email = $1 LIMIT 1;
 
 -- name: CreateUser :one
 INSERT INTO users (username, email, password_hash, roles, timezone)

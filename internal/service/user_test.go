@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/stretchr/testify/assert"
+	"github.com/tmaffia/dungeon-time-api/internal/repo"
 )
 
 func TestBuildUser(t *testing.T) {
@@ -62,12 +62,14 @@ func TestUser_ValidatePassword(t *testing.T) {
 		args args
 		want bool
 	}{
-		{"TestValidatePassword Success",
+		{
+			"TestValidatePassword Success",
 			&User{passwordHash: "$2a$10$Hur1mzq5JZbbXAYBvwgH0uAOlc5dOPn0EswvqVmY6PTBdquTBiXs."},
 			args{"test12345!"},
 			true,
 		},
-		{"TestValidatePassword Fail",
+		{
+			"TestValidatePassword Fail",
 			&User{passwordHash: "$2a$10$Hur1mzq5JZbbXAYBvwgH0uAOlc5dOPn0EswvqVmY6PTBdquTBiXs."},
 			args{"test"},
 			false,
@@ -76,26 +78,6 @@ func TestUser_ValidatePassword(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			assert.Equal(t, tt.want, tt.u.ValidatePassword(tt.args.password))
-		})
-	}
-}
-
-func TestNewUserService(t *testing.T) {
-	type args struct {
-		dbPool *pgxpool.Pool
-	}
-	tests := []struct {
-		name string
-		args args
-		want *userService
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := NewUserService(tt.args.dbPool); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewUserService() = %v, want %v", got, tt.want)
-			}
 		})
 	}
 }
@@ -110,20 +92,65 @@ func Test_userService_RegisterUser(t *testing.T) {
 		s       *userService
 		args    args
 		want    *User
-		wantErr bool
+		wantErr error
 	}{
-		// TODO: Add test cases.
+		{
+			"TestRegisterUser Success",
+			&userService{},
+			args{context.Background(), &User{
+				Username:     "testusername",
+				Email:        "example@example.com",
+				passwordHash: "$2a$10$Hur1mzq5JZbbXAYBvwgH0uAOlc5dOPn0EswvqVmY6PTBdquTBiXs.",
+			}},
+			&User{
+				ID:           0,
+				Username:     "testusername",
+				Email:        "example@example.com",
+				passwordHash: "$2a$10$Hur1mzq5JZbbXAYBvwgH0uAOlc5dOPn0EswvqVmY6PTBdquTBiXs.",
+			},
+			nil,
+		},
+		// {
+		// 	"TestRegisterUser Invalid User",
+		// 	&userService{},
+		// 	args{context.Background(), &User{
+		// 		Username:     "testusername",
+		// 		Email:        "example@example.com",
+		// 		passwordHash: "$2a$10$Hur1mzq5JZbbXAYBvwgH0uAOlc5dOPn0EswvqVmY6PTBdquTBiXs.",
+		// 	}},
+		// 	&User{
+		// 		ID:           0,
+		// 		Username:     "testusername",
+		// 		Email:        "example@example.com",
+		// 		passwordHash: "$2a$10$Hur1mzq5JZbbXAYBvwgH0uAOlc5dOPn0EswvqVmY6PTBdquTBiXs.",
+		// 	},
+		// 	ErrInvalidUser,
+		// },
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := tt.s.RegisterUser(tt.args.ctx, tt.args.user)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("userService.RegisterUser() error = %v, wantErr %v", err, tt.wantErr)
+			// Mock the userRepo
+			mockq := repo.NewMockQuerier(t)
+			mockq.EXPECT().CreateUser(tt.args.ctx, repo.CreateUserParams{
+				Username:     tt.args.user.Username,
+				Email:        tt.args.user.Email,
+				PasswordHash: tt.args.user.passwordHash,
+				Roles:        []string{},
+			}).Return(repo.User{
+				ID:       0,
+				Username: tt.args.user.Username,
+				Email:    tt.args.user.Email,
+				Roles:    []string{},
+				Timezone: "UTC",
+			}, nil)
+			tt.s = &userService{userRepo: mockq}
+
+			u, err := tt.s.RegisterUser(tt.args.ctx, tt.args.user)
+			if !assert.ErrorIs(t, err, tt.wantErr) {
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("userService.RegisterUser() = %v, want %v", got, tt.want)
-			}
+			assert.Equal(t, tt.want, u)
 		})
 	}
 }

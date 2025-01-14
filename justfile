@@ -16,7 +16,7 @@ test:
     go test ./...
 
 mocks:
-    go run github.com/vektra/mockery/v2@v2.44.1
+    go run github.com/vektra/mockery/v2@v2.50.0
 
 migrate-create *args:
     migrate create -ext sql -dir db/migrations -seq {{args}}

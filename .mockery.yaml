@@ -1,10 +1,17 @@
-with-expecter: True
-dir: "mock/{{.PackageName}}"
-mockname: "{{.InterfaceName}}"
-outpkg: "{{.PackageName}}_mock"
-filename: "{{.InterfaceName}}_mock.go"
+# with-expecter: True
+filename: "mock_{{.InterfaceName}}.go"
+dir: "{{.InterfaceDir}}"
+mockname: "mock{{.InterfaceName}}"
+outpkg: "{{.PackageName}}"
+inpackage: True
+exported: False
 all: True
 packages:
   github.com/tmaffia/dungeon-time-api:
     config:
       recursive: True
+  github.com/tmaffia/dungeon-time-api/internal/repo:
+    config:
+      mockname: "Mock{{.InterfaceName}}"
+      recursive: True
+      exported: True

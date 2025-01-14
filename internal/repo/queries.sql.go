@@ -23,7 +23,7 @@ type CreateUserParams struct {
 	Timezone     string
 }
 
-func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (*User, error) {
+func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
 	row := q.db.QueryRow(ctx, createUser,
 		arg.Username,
 		arg.Email,
@@ -42,7 +42,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (*User, 
 		&i.UpdatedAt,
 		&i.Roles,
 	)
-	return &i, err
+	return i, err
 }
 
 const getUserByEmail = `-- name: GetUserByEmail :one
@@ -58,7 +58,7 @@ type GetUserByEmailRow struct {
 	Timezone string
 }
 
-func (q *Queries) GetUserByEmail(ctx context.Context, email string) (*GetUserByEmailRow, error) {
+func (q *Queries) GetUserByEmail(ctx context.Context, email string) (GetUserByEmailRow, error) {
 	row := q.db.QueryRow(ctx, getUserByEmail, email)
 	var i GetUserByEmailRow
 	err := row.Scan(
@@ -68,7 +68,7 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (*GetUserByE
 		&i.Roles,
 		&i.Timezone,
 	)
-	return &i, err
+	return i, err
 }
 
 const getUserByID = `-- name: GetUserByID :one
@@ -84,7 +84,7 @@ type GetUserByIDRow struct {
 	Timezone string
 }
 
-func (q *Queries) GetUserByID(ctx context.Context, id int32) (*GetUserByIDRow, error) {
+func (q *Queries) GetUserByID(ctx context.Context, id int32) (GetUserByIDRow, error) {
 	row := q.db.QueryRow(ctx, getUserByID, id)
 	var i GetUserByIDRow
 	err := row.Scan(
@@ -94,7 +94,7 @@ func (q *Queries) GetUserByID(ctx context.Context, id int32) (*GetUserByIDRow, e
 		&i.Roles,
 		&i.Timezone,
 	)
-	return &i, err
+	return i, err
 }
 
 const getUserByUsername = `-- name: GetUserByUsername :one
@@ -110,7 +110,7 @@ type GetUserByUsernameRow struct {
 	Timezone string
 }
 
-func (q *Queries) GetUserByUsername(ctx context.Context, username string) (*GetUserByUsernameRow, error) {
+func (q *Queries) GetUserByUsername(ctx context.Context, username string) (GetUserByUsernameRow, error) {
 	row := q.db.QueryRow(ctx, getUserByUsername, username)
 	var i GetUserByUsernameRow
 	err := row.Scan(
@@ -120,7 +120,7 @@ func (q *Queries) GetUserByUsername(ctx context.Context, username string) (*GetU
 		&i.Roles,
 		&i.Timezone,
 	)
-	return &i, err
+	return i, err
 }
 
 const getUserFullByEmail = `-- name: GetUserFullByEmail :one
@@ -128,7 +128,7 @@ SELECT id, username, email, password_hash, timezone, created_at, updated_at, rol
 WHERE email = $1 LIMIT 1
 `
 
-func (q *Queries) GetUserFullByEmail(ctx context.Context, email string) (*User, error) {
+func (q *Queries) GetUserFullByEmail(ctx context.Context, email string) (User, error) {
 	row := q.db.QueryRow(ctx, getUserFullByEmail, email)
 	var i User
 	err := row.Scan(
@@ -141,7 +141,7 @@ func (q *Queries) GetUserFullByEmail(ctx context.Context, email string) (*User, 
 		&i.UpdatedAt,
 		&i.Roles,
 	)
-	return &i, err
+	return i, err
 }
 
 const getUsers = `-- name: GetUsers :many
@@ -156,13 +156,13 @@ type GetUsersRow struct {
 	Timezone string
 }
 
-func (q *Queries) GetUsers(ctx context.Context) ([]*GetUsersRow, error) {
+func (q *Queries) GetUsers(ctx context.Context) ([]GetUsersRow, error) {
 	rows, err := q.db.Query(ctx, getUsers)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []*GetUsersRow
+	var items []GetUsersRow
 	for rows.Next() {
 		var i GetUsersRow
 		if err := rows.Scan(
@@ -174,7 +174,7 @@ func (q *Queries) GetUsers(ctx context.Context) ([]*GetUsersRow, error) {
 		); err != nil {
 			return nil, err
 		}
-		items = append(items, &i)
+		items = append(items, i)
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err

@@ -117,7 +117,7 @@ type UserService interface {
 // user-related operations.
 type userService struct {
 	dbPool   *pgxpool.Pool
-	userRepo *repo.Queries
+	userRepo repo.Querier
 }
 
 // NewUserService creates a new userService with the provided database connection pool.
